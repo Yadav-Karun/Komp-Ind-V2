@@ -1,0 +1,29 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<suite name="KOMP_Global_Suite" parallel="false">
+
+    <listeners>
+        <listener class-name="listeners.ClickScreenshotListener"/>
+    </listeners>
+
+    <test name="Smoke_Test">
+
+        <classes>
+
+            <class name="tests.Test_Login">
+                <methods>
+                    <include name="LoginAsAdmin"/>
+                </methods>
+            </class>
+
+            <class name="tests.Test_EmployeeOnboarding">
+                <methods>
+                    <include name="TestEOR_EmployeeOnboarding"/>
+                </methods>
+            </class>
+
+        </classes>
+
+    </test>
+
+</suite>

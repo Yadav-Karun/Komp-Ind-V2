@@ -1,0 +1,19 @@
+[
+	{
+	"adminEmail": "karun.yadav.eor@yopmail.com",
+	"adminPassword": "Dev2004!",
+	
+	"adminEmailSandbox": "sandbox_testing.kompglobal@yopmail.com",
+	"adminPasswordSandbox": "Dev2005!",
+
+	"adminEmailPreprod": "karun.yadav.eor@yopmail.com",
+	"adminPasswordPreprod": "Dev2004!",
+
+	"clientType": "EOR",
+	"country": "India",
+	
+	"genericPassword": "Lskrk!123",
+	
+	"pinCode": "201009"
+	}
+]

@@ -1,0 +1,31 @@
+# Maven
+target/
+
+# TestNG Reports
+test-output/
+
+# Extent Reports
+extent-reports/
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# Browser Profiles
+brave-profile-*/
+chrome-profile-*/
+
+# OS
+.DS_Store
+Thumbs.db
