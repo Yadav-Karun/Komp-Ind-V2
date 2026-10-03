@@ -97,7 +97,19 @@ public class EOR_Excel_EmployeeOnboarding {
         candidatePersonalInfo.identificationInformation(input.getAadhaarNumber(), input.getPanNumber(), input.getDrivingLicenceNumber(), input.getPassportNumber());
     }
 
+    // UPDATED ON 2026-10-03 12:44 IST: Completes the reset flow, stores the Yopmail OTP, and verifies the generic password can sign in.
     public void forgotPassword(Data input) throws Exception {
-        forgotPasswordCandidate.forgotPassword(input.getEmail(), input.getOtp(), input.getgenericPassword());
+        forgotPasswordCandidate.sendResetCode(input.getEmail());
+
+        String otp = yopmail.getPasswordResetOtp();
+        input.setOtp(otp);
+
+        yopmail.switchToCandidateWindow();
+        forgotPasswordCandidate.resetPassword(input.getOtp(), input.getgenericPassword());
+        loginPage.loginAsEmployee(input.getEmail(), input.getgenericPassword());
+
+        if (loginPage.isLoginErrorVisible()) {
+            throw new RuntimeException("Candidate login failed after password reset.");
+        }
     }
 }

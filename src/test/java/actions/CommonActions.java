@@ -379,6 +379,22 @@ public class CommonActions {
         driver.switchTo().window(windowName);
     }
 
+    // ADDED ON 2026-10-03 12:44 IST: Reusable window switcher by URL fragment, needed to move between Yopmail and candidate windows.
+    public void switchToWindowContainingUrl(String urlFragment) {
+        String currentWindow = driver.getWindowHandle();
+
+        for (String windowHandle : driver.getWindowHandles()) {
+            driver.switchTo().window(windowHandle);
+
+            if (driver.getCurrentUrl().contains(urlFragment)) {
+                return;
+            }
+        }
+
+        driver.switchTo().window(currentWindow);
+        throw new RuntimeException("No open window contains URL fragment: " + urlFragment);
+    }
+
     public void loadProperties() throws Exception {
         String path = System.getProperty("user.dir") + "/src/test/resources/config/GlobalData.properties";
         try (FileInputStream fis = new FileInputStream(path)) {

@@ -18,7 +18,8 @@
 
             <class name="tests.Test_EmployeeOnboarding">
                 <methods>
-                    <include name="TestEOR_EmployeeOnboarding"/>
+                    <!-- UPDATED ON 2026-10-03 12:44 IST: Selects the existing onboarding method so the password-reset flow runs. -->
+                    <include name="registerCandidate"/>
                 </methods>
             </class>
 
