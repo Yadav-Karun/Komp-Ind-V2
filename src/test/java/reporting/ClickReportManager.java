@@ -18,7 +18,7 @@ public class ClickReportManager {
 
         ExtentSparkReporter sparkReporter = new ExtentSparkReporter(reportPath);
         sparkReporter.config().setDocumentTitle("KOMP Click Execution Report");
-        sparkReporter.config().setReportName("KOMP Click Execution Report");
+        sparkReporter.config().setReportName("KOMP IND Report");
 
         extent = new ExtentReports();
         extent.attachReporter(sparkReporter);
