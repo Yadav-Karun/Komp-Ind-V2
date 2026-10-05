@@ -27,6 +27,9 @@ public class Test_EmployeeOnboarding extends TestBase {
 		eorEmployeeOnboarding.CandidatePersonal(input);
 
 		// I will uncomment after Bug fix for forgot password.
-		//eorEmployeeOnboarding.forgotPassword(input);
+		// eorEmployeeOnboarding.forgotPassword(input);
+
+		eorEmployeeOnboarding.loginAdmin(input);
+		eorEmployeeOnboarding.verifyCandidate(input);
 	}
 }

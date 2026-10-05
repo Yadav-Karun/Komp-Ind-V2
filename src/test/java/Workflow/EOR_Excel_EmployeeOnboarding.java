@@ -8,6 +8,7 @@ import pages.LoginPage;
 import pages.EOR_RegisterCandidate;
 import pages.ForgotPassword;
 import pages.Logout;
+import pages.VerifyCandidate;
 import pages.Candidate;
 import pages.CandidateSelfInfo;
 import pages.Yopmail;
@@ -22,6 +23,7 @@ public class EOR_Excel_EmployeeOnboarding {
     private Logout logout;
     private CandidateSelfInfo candidatePersonalInfo;
     private ForgotPassword forgotPasswordCandidate;
+    private VerifyCandidate verifyCandidate;
 
     public EOR_Excel_EmployeeOnboarding() throws Exception {
 
@@ -32,6 +34,7 @@ public class EOR_Excel_EmployeeOnboarding {
         yopmail = new Yopmail(TestBase.getDriver());
         candidatePersonalInfo = new CandidateSelfInfo(TestBase.getDriver());
         forgotPasswordCandidate = new ForgotPassword(TestBase.getDriver());
+        verifyCandidate = new VerifyCandidate(TestBase.getDriver());
     }
 
     public boolean loginAdmin(Data input) throws Exception {
@@ -112,4 +115,9 @@ public class EOR_Excel_EmployeeOnboarding {
             throw new RuntimeException("Candidate login failed after password reset.");
         }
     }
+
+    public void verifyCandidate(Data input) throws Exception {
+        verifyCandidate.searchCandidate(input.getEmail());
+    }
 }
+    
