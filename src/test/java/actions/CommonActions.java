@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.InvalidElementStateException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -41,6 +42,8 @@ public class CommonActions {
         PageFactory.initElements(driver, this);
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled after the framework-wide audit found no direct or reachable call to these page scrolling helpers.
+    /*
     public void scrollToTop() {
         js.executeScript("window.scrollTo(0, 0);");
     }
@@ -48,6 +51,7 @@ public class CommonActions {
     public void scrollToBottom() {
         js.executeScript("window.scrollTo(0, document.body.scrollHeight);");
     }
+    */
 
     public void scrollIntoView(WebElement element) {
         js.executeScript("arguments[0].scrollIntoView({block: 'center'});", element);
@@ -60,11 +64,14 @@ public class CommonActions {
         click(locator, seconds);
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled because this overload has no direct or reachable call; the timed/reporting overload is actively used.
+    /*
     public void scrollIntoViewAndClick(By locator) {
         WebElement element = getElement(locator);
         scrollIntoView(element);
         element.click();
     }
+    */
 
     public WebElement getElement(By locator) {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -79,6 +86,52 @@ public class CommonActions {
         return customWait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
+    // ADDED ON 2026-10-08 10:51 IST: Performs a browser hard refresh with Ctrl+Shift+R so callers can reload dynamic pages without using a normal cache-backed refresh.
+    public void hardRefreshPage() {
+        action.keyDown(Keys.CONTROL)
+                .keyDown(Keys.SHIFT)
+                .sendKeys("r")
+                .keyUp(Keys.SHIFT)
+                .keyUp(Keys.CONTROL)
+                .perform();
+    }
+
+    // ADDED ON 2026-10-08 10:51 IST: Waits briefly for a dynamic state, then hard-refreshes up to the requested limit until the expected element is visible.
+    public void hardRefreshUntilElementVisible(By locator, int waitSeconds, int maxHardRefreshes) {
+        if (waitSeconds <= 0 || maxHardRefreshes <= 0) {
+            throw new IllegalArgumentException("Wait seconds and maximum hard refreshes must both be greater than zero.");
+        }
+
+        TimeoutException lastTimeout = null;
+
+        try {
+            new WebDriverWait(driver, Duration.ofSeconds(waitSeconds))
+                    .until(ExpectedConditions.visibilityOfElementLocated(locator));
+            return;
+        } catch (TimeoutException timeoutException) {
+            lastTimeout = timeoutException;
+        }
+
+        for (int attempt = 1; attempt <= maxHardRefreshes; attempt++) {
+            hardRefreshPage();
+
+            try {
+                new WebDriverWait(driver, Duration.ofSeconds(waitSeconds))
+                        .until(ExpectedConditions.visibilityOfElementLocated(locator));
+                return;
+            } catch (TimeoutException timeoutException) {
+                lastTimeout = timeoutException;
+            }
+        }
+
+        throw new RuntimeException(
+                "Element did not become visible after " + maxHardRefreshes + " hard refresh attempts: " + locator,
+                lastTimeout
+        );
+    }
+
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled after the audit found no direct or reachable call to these visibility/clickability check helpers.
+    /*
     public boolean isVisible(By locator) {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -94,6 +147,17 @@ public class CommonActions {
 
     public void isClickable(WebElement element) {
         wait.until(ExpectedConditions.elementToBeClickable(element));
+    }
+    */
+
+    // ADDED ON 2026-10-07 17:47 IST: Gives a transient modal overlay three seconds to settle before the next intercepted-click retry, without delaying successful or stale-element clicks.
+    private void waitBeforeInterceptedClickRetry() {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Interrupted while waiting to retry an intercepted click.", interruptedException);
+        }
     }
 
     public void click(By locator, int seconds, String elementName) {
@@ -112,11 +176,16 @@ public class CommonActions {
 
                 return;
 
+            // UPDATED ON 2026-10-07 17:39 IST: Keeps intercepted-click retries through ElementNotInteractableException, which is the parent class of ElementClickInterceptedException.
             } catch (StaleElementReferenceException |
                      ElementNotInteractableException e) {
 
                 if (attempt == maxAttempts) {
                     throw e;
+                }
+
+                if (e instanceof ElementClickInterceptedException) {
+                    waitBeforeInterceptedClickRetry();
                 }
             }
         }
@@ -155,14 +224,22 @@ public class CommonActions {
                 return;
             } 
             
-            catch (StaleElementReferenceException | ElementNotInteractableException e) {
+            // UPDATED ON 2026-10-07 17:39 IST: Keeps intercepted-click retries through ElementNotInteractableException, which also covers the Bulk Upload close action.
+            catch (StaleElementReferenceException |
+                   ElementNotInteractableException e) {
                 if (attempt == maxAttempts) {
                     throw e;
+                }
+
+                if (e instanceof ElementClickInterceptedException) {
+                    waitBeforeInterceptedClickRetry();
                 }
             }
         }
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled after the audit found no direct or reachable call to either JavaScript-click overload.
+    /*
     public void clickWithJS(By locator) {
         for (int i = 0; i < 3; i++) {
             try {
@@ -181,6 +258,7 @@ public class CommonActions {
     public void clickWithJS(WebElement element) {
         js.executeScript("arguments[0].click();", element);
     }
+    */
 
     public void clickWithRetry(By locator) {
         for (int i = 0; i < 3; i++) {
@@ -197,6 +275,8 @@ public class CommonActions {
         }
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled because the timed retry-click overload has no direct or reachable call; the default retry-click overload remains in use.
+    /*
     public void clickWithRetry(By locator, int seconds) {
         for (int i = 0; i < 3; i++) {
             try {
@@ -211,6 +291,7 @@ public class CommonActions {
             }
         }
     }
+    */
 
     public void type(By locator, String text) {
 
@@ -316,6 +397,8 @@ public class CommonActions {
         customWait.until(ExpectedConditions.visibilityOfElementLocated(locator));
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled after the audit found no direct or reachable call to these element-wait helpers. The By-based appear waits remain active.
+    /*
     public void waitForElementToAppear(WebElement element) {
         wait.until(ExpectedConditions.visibilityOf(element));
     }
@@ -335,6 +418,7 @@ public class CommonActions {
     public void waitForCartProductsToLoad(By locator) {
         wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(locator, 0));
     }
+    */
 
     public void waitForUrl(String keyword) {
         wait.until(ExpectedConditions.urlContains(keyword));
@@ -344,6 +428,8 @@ public class CommonActions {
         wait.until(driver -> ((JavascriptExecutor) driver).executeScript("return document.readyState").equals("complete"));
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled because neither alert-wait helper has a direct or reachable call in the framework.
+    /*
     public void isAlertVisible() {
         wait.until(ExpectedConditions.alertIsPresent());
     }
@@ -351,6 +437,7 @@ public class CommonActions {
     public void waitForAlert() {
         wait.until(ExpectedConditions.alertIsPresent());
     }
+    */
 
     public void waitForFrameAndSwitch(WebElement frame) {
         wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(frame));
@@ -402,6 +489,8 @@ public class CommonActions {
         }
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled after the audit found no direct or reachable call to these custom-wait and DOM-style helpers.
+    /*
     public void customWait(int seconds) throws InterruptedException {
         Thread.sleep(seconds * 1000L);
     }
@@ -422,6 +511,7 @@ public class CommonActions {
     public void removeDesigne(WebElement element) {
         js.executeScript("arguments[0].style.display='none';", element);
     }
+    */
 
     public void uploadFile(By locator, String filePath) {
         WebElement element = driver.findElement(locator);
@@ -429,6 +519,8 @@ public class CommonActions {
         element.sendKeys(filePath);
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled because no framework code calls the character typing helper or the loader helpers; the latter are only referenced by the disabled custom-wait method.
+    /*
     public void typeCharacterByCharacter(String text) {
         for (char character : text.toCharArray()) {
             action.sendKeys(String.valueOf(character)).pause(Duration.ofMillis(100)).perform();
@@ -461,12 +553,15 @@ public class CommonActions {
     public void hideLoader() {
         js.executeScript("var loader = document.getElementById('customLoader');" + "if(loader){loader.remove();}");
     }
+    */
 
     public void setDate(By locator, String date) {
         WebElement element = getClickableElement(locator);
         element.sendKeys(date);
     }
 
+    // UNUSED ON 2026-10-06 11:15 IST: Disabled after the audit found no direct or reachable call to these notification/toast helpers. The shared handleToastIfVisible helper remains active.
+    /*
     public void waitForNotificationToDisappear(int seconds) {
         By notification = By.xpath("//section[@aria-label='Notifications alt+T']");
         new WebDriverWait(driver, Duration.ofSeconds(seconds))
@@ -482,6 +577,7 @@ public class CommonActions {
         } catch (Exception ignored) {
         }
     }
+    */
 
     public void handleToastIfVisible() {
     try {

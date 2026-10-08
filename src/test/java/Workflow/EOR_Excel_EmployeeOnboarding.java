@@ -9,7 +9,7 @@ import pages.EOR_RegisterCandidate;
 import pages.ForgotPassword;
 import pages.Logout;
 import pages.VerifyCandidate;
-import pages.Candidate;
+import pages.CandidatePage;
 import pages.CandidateSelfInfo;
 import pages.Yopmail;
 import utils.EmployeeCredentialsManager;
@@ -18,7 +18,8 @@ public class EOR_Excel_EmployeeOnboarding {
 
     private LoginPage loginPage;
     private EOR_RegisterCandidate registerCandidate;
-    private Candidate candidate;
+    // UPDATED ON 2026-10-06 12:19 IST: Uses one shared CandidatePage instance because candidate search and offer-letter actions run on the same page and driver.
+    private CandidatePage candidatePage;
     private Yopmail yopmail;
     private Logout logout;
     private CandidateSelfInfo candidatePersonalInfo;
@@ -30,7 +31,7 @@ public class EOR_Excel_EmployeeOnboarding {
         loginPage = new LoginPage(TestBase.getDriver());
         registerCandidate = new EOR_RegisterCandidate(TestBase.getDriver());
         logout = new Logout(TestBase.getDriver());
-        candidate = new Candidate(TestBase.getDriver());
+        candidatePage = new CandidatePage(TestBase.getDriver());
         yopmail = new Yopmail(TestBase.getDriver());
         candidatePersonalInfo = new CandidateSelfInfo(TestBase.getDriver());
         forgotPasswordCandidate = new ForgotPassword(TestBase.getDriver());
@@ -57,7 +58,7 @@ public class EOR_Excel_EmployeeOnboarding {
     }
 
     public void searchCandidate(Data input) throws Exception {
-        candidate.searchCandidate(input.getEmail());
+        candidatePage.searchCandidate(input.getEmail());
     }
 
     public void yopmailAcceptLetterOfIntent(Data input) throws Exception {
@@ -117,7 +118,19 @@ public class EOR_Excel_EmployeeOnboarding {
     }
 
     public void verifyCandidate(Data input) throws Exception {
-        verifyCandidate.searchCandidate(input.getEmail());
+        verifyCandidate.searchEmployee(input.getEmail());
     }
+
+    public void candidatePage(Data input) throws Exception {
+        candidatePage.searchCandidate(input.getEmail());
+
+        // ADDED ON 2026-10-07 11:41 IST: Sends the offer letter after the verified candidate has been searched and selected.
+        candidatePage.sendOfferLetter(input.getEmail());
+    }
+
+    public void clickCandidateLoginLink() throws Exception {
+        loginPage.clickCandidateLoginLink();
+    }
+
 }
     

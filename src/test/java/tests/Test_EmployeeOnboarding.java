@@ -31,5 +31,11 @@ public class Test_EmployeeOnboarding extends TestBase {
 
 		eorEmployeeOnboarding.loginAdmin(input);
 		eorEmployeeOnboarding.verifyCandidate(input);
+
+		eorEmployeeOnboarding.candidatePage(input);
+		eorEmployeeOnboarding.logoutAccount();
+
+		eorEmployeeOnboarding.clickCandidateLoginLink();
+		eorEmployeeOnboarding.loginCandidateWithStoredCredentials(input);
 	}
 }
