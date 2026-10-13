@@ -24,6 +24,8 @@ public class CandidateSelfInfo extends CommonActions {
     By bloodGroupDropdown = By.xpath("(//button[@role='combobox'])[3]");
     By dateOfBirthField = By.xpath("//input[@name='emp_dob']");
     By physicallyHandicappedDropdown = By.xpath("(//button[@role='combobox'])[4]");
+    // UPDATED ON 2026-10-13 12:29 IST: Targets the exact file input confirmed in the candidate-page DOM; the preceding label-based XPath did not contain this hidden input.
+    By uploadDisabilityCertificate = By.xpath("//input[@name='disability_certificate' and @type='file']");
     By saveAndContinueButton = By.xpath("//button[normalize-space()='Save & Continue']");
 
     //Contact Information Locators
@@ -99,7 +101,8 @@ public class CandidateSelfInfo extends CommonActions {
     By drivingLicenceNumberField = By.xpath("//input[@name='licence_no']");
     By passportNumberField = By.xpath("//input[@name='passport_no']");
 
-    By uploadAadhaarButton = By.xpath("//input[@name='upload_aadhar_front']");
+    By uploadAadhaarFront = By.xpath("//input[@name='upload_aadhar_front']");
+    By uploadAadhaarBack = By.xpath("//input[@name='upload_aadhar_back']");
     By uploadPanButton = By.xpath("//input[@name='upload_pancard']");
     By uploadDrivingLicenceButton = By.xpath("//input[@name='upload_driving_licence']");
     By uploadPassportButton = By.xpath("//input[@name='upload_passport']");
@@ -144,6 +147,10 @@ public class CandidateSelfInfo extends CommonActions {
         setDate(dateOfBirthField, dateOfBirth);
 
         selectOption(physicallyHandicappedDropdown, physicallyHandicapped);
+        if (physicallyHandicapped.equalsIgnoreCase("Yes")) {
+            // UPDATED ON 2026-10-13 12:29 IST: Uploads the configured certificate through the DOM-confirmed Disability Certificate file input after Physically Handicapped is set to Yes.
+            driver.findElement(uploadDisabilityCertificate).sendKeys(properties.getProperty("disabledEmployeePath"));
+        }
 
         click(saveAndContinueButton, 10, "Personal Information Page");
     }
@@ -227,7 +234,8 @@ public class CandidateSelfInfo extends CommonActions {
         type(drivingLicenceNumberField, drivingLicenceNumber);
         type(passportNumberField, passportNumber);
 
-        driver.findElement(uploadAadhaarButton).sendKeys(properties.getProperty("aadhaarPdfPath"));
+        driver.findElement(uploadAadhaarFront).sendKeys(properties.getProperty("aadhaarFrontPdfPath"));
+        driver.findElement(uploadAadhaarBack).sendKeys(properties.getProperty("aadhaarBackPdfPath"));
         driver.findElement(uploadPanButton).sendKeys(properties.getProperty("panPdfPath"));
         driver.findElement(uploadDrivingLicenceButton).sendKeys(properties.getProperty("drivingPdfPath"));
         driver.findElement(uploadPassportButton).sendKeys(properties.getProperty("pasportPdfPath"));

@@ -21,6 +21,8 @@ public class LoginPage extends CommonActions {
 
 	By clickOnCandidateLogin = By.xpath("//a[normalize-space()='Candidate']");
 
+	By candidateloginURL = By.xpath("//a[contains(text(),'Candidate Login')]");
+
 	public void goToLoginPage() {
 		driver.get(properties.getProperty("kompURL"));
 		waitForPageLoad();
@@ -61,6 +63,12 @@ public class LoginPage extends CommonActions {
 		type(password, passcode);
 		click(signInButton, 10, "Login as Candidate");
 	}
+
+	public void clickCandidateLoginLink() {
+        // UPDATED ON 2026-10-08 11:22 IST: Clicks the visible Candidate link on the post-logout User Login page, then waits for the candidate login page to render.
+        click(clickOnCandidateLogin, 120, "Candidate login link");
+        waitForPageLoad();
+    }
 
 	public boolean isLoginErrorVisible() {
 		try {
