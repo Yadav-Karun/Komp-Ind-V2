@@ -37,5 +37,7 @@ public class Test_EmployeeOnboarding extends TestBase {
 
 		eorEmployeeOnboarding.clickCandidateLoginLink();
 		eorEmployeeOnboarding.loginCandidateWithStoredCredentials(input);
+
+		eorEmployeeOnboarding.refreshUntilAcceptButtonVisible();
 	}
 }

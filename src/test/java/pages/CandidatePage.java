@@ -179,7 +179,14 @@ public class CandidatePage extends CommonActions{
     }
 
     public void acceptOfferLetter() {
-
+        if (isVisible(clickDone)) {
+            hardRefreshPage();
+        }
+        else{
+            WebElement acceptButton = getClickableElement(acceptOfferLetter, 120);
+            scrollIntoView(acceptButton);
+            action.moveToElement(acceptButton).click().perform();
+        }
     }
 
 }

@@ -131,7 +131,7 @@ public class CommonActions {
     }
 
     // UNUSED ON 2026-10-06 11:15 IST: Disabled after the audit found no direct or reachable call to these visibility/clickability check helpers.
-    /*
+    
     public boolean isVisible(By locator) {
         try {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
@@ -141,6 +141,7 @@ public class CommonActions {
         }
     }
 
+    /*
     public void isClickable(By locator) {
         wait.until(ExpectedConditions.elementToBeClickable(locator));
     }

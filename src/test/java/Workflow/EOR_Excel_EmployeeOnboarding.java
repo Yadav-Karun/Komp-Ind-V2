@@ -132,5 +132,9 @@ public class EOR_Excel_EmployeeOnboarding {
         loginPage.clickCandidateLoginLink();
     }
 
+    public void refreshUntilAcceptButtonVisible() throws Exception {
+        candidatePage.acceptOfferLetter();
+    }
+
 }
     
