@@ -54,13 +54,6 @@ public class CandidatePage extends CommonActions{
         "//div[@role='dialog']//div[@data-slot='dialog-footer']//button[normalize-space()='Send']"
     );
 
-    By clickDone = By.xpath("//button[text()='Done']");
-
-    By acceptOfferLetter = By.xpath("//button[contains(text(), 'Accept Offer')]");
-
-    // Closes the confirmation modal displayed immediately after an offer is accepted.
-    By acceptedOfferLogout = By.xpath("//button[normalize-space()='Logout']");
-
     // By candidateloginURL = By.xpath("//a[contains(text(),'Candidate Login')]");
 
     public void searchCandidate(String generatedEmail) {
@@ -179,22 +172,6 @@ public class CandidatePage extends CommonActions{
 
         // ADDED ON 2026-10-08 10:49 IST: Waits for the generated candidate's Offer Letter status to update to PENDING after sending.
         verifyOfferLetterPending(generatedEmail);
-    }
-
-    /** Checks this page's offer action; generic clickable waiting lives in CommonActions. */
-    public boolean acceptOfferLetterIfAvailable(int waitSeconds) {
-        if (!isElementClickable(acceptOfferLetter, waitSeconds)) {
-            return false;
-        }
-
-        click(acceptOfferLetter, 120, "Accept Offer");
-        click(acceptedOfferLogout, 120, "Accepted offer Logout");
-        return true;
-    }
-
-    /** Closes the completed-profile modal, which returns the user to the login flow. */
-    public void closeCompletedProfileModal() {
-        click(clickDone, 10, "Profile complete Done");
     }
 
 }

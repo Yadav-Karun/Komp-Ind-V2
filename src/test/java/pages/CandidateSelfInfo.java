@@ -123,6 +123,10 @@ public class CandidateSelfInfo extends CommonActions {
     By iAcknowledge = By.xpath("//button[normalize-space()='I Acknowledge']");
     By doneLogout = By.xpath("//button[normalize-space()='Done']");
 
+    // Offer Letter locators
+    By acceptOfferLetter = By.xpath("//button[contains(text(), 'Accept Offer')]");
+    By acceptedOfferLogout = By.xpath("//button[normalize-space()='Logout']");
+
     public void clickStartNowButton() throws Exception {
         click(startNowButton, 10, "Start Onboarding");
     }  
@@ -252,5 +256,21 @@ public class CandidateSelfInfo extends CommonActions {
         click(saveAndContinueButton, 10, "Identification Information Page");
 
         click(doneLogout, 10, "Logout");
+    }
+
+    /** Checks the current candidate session and accepts the offer when it is available. */
+    public boolean acceptOfferLetterIfAvailable(int waitSeconds) {
+        if (!isElementClickable(acceptOfferLetter, waitSeconds)) {
+            return false;
+        }
+
+        click(acceptOfferLetter, 120, "Accept Offer");
+        click(acceptedOfferLogout, 120, "Accepted offer Logout");
+        return true;
+    }
+
+    /** Closes the completed-profile modal and returns the candidate to the login page. */
+    public void closeCompletedProfileModal() {
+        click(doneLogout, 10, "Profile complete Done");
     }
 }

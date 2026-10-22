@@ -143,11 +143,11 @@ public class EOR_Excel_EmployeeOnboarding {
         final int waitSeconds = 3;
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
-            if (candidatePage.acceptOfferLetterIfAvailable(waitSeconds)) {
+            if (candidatePersonalInfo.acceptOfferLetterIfAvailable(waitSeconds)) {
                 return;
             }
 
-            candidatePage.closeCompletedProfileModal();
+            candidatePersonalInfo.closeCompletedProfileModal();
 
             if (attempt < maxAttempts) {
                 loginCandidateWithStoredCredentials(input);
