@@ -13,7 +13,7 @@ public class Test_EmployeeOnboarding extends TestBase {
 	@Test(dataProvider = "sendData", dataProviderClass = Dataprovider.class)
 	public void registerCandidate(Data input) throws Exception {
 		EOR_Excel_EmployeeOnboarding eorEmployeeOnboarding = new EOR_Excel_EmployeeOnboarding();
-		boolean loginError =eorEmployeeOnboarding.loginAdmin(input);
+		boolean loginError = eorEmployeeOnboarding.loginAdmin(input);
 
 		Assert.assertFalse(loginError, "Login failed. Error message displayed.");
 
