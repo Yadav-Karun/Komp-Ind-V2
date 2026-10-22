@@ -54,10 +54,6 @@ public class CandidatePage extends CommonActions{
         "//div[@role='dialog']//div[@data-slot='dialog-footer']//button[normalize-space()='Send']"
     );
 
-    By clickDone = By.xpath("//button[text()='Done']");
-
-    By acceptOfferLetter = By.xpath("//button[contains(text(), 'Accept Offer')]");
-
     // By candidateloginURL = By.xpath("//a[contains(text(),'Candidate Login')]");
 
     public void searchCandidate(String generatedEmail) {
@@ -176,17 +172,6 @@ public class CandidatePage extends CommonActions{
 
         // ADDED ON 2026-10-08 10:49 IST: Waits for the generated candidate's Offer Letter status to update to PENDING after sending.
         verifyOfferLetterPending(generatedEmail);
-    }
-
-    public void acceptOfferLetter() {
-        if (isVisible(clickDone)) {
-            hardRefreshPage();
-        }
-        else{
-            WebElement acceptButton = getClickableElement(acceptOfferLetter, 120);
-            scrollIntoView(acceptButton);
-            action.moveToElement(acceptButton).click().perform();
-        }
     }
 
 }

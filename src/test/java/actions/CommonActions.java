@@ -86,6 +86,23 @@ public class CommonActions {
         return customWait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
+    /**
+     * Checks whether a locator becomes clickable within the requested timeout
+     * without failing the test when the element is not yet present.
+     */
+    public boolean isElementClickable(By locator, int seconds) {
+        if (seconds <= 0) {
+            throw new IllegalArgumentException("Wait seconds must be greater than zero.");
+        }
+
+        try {
+            getClickableElement(locator, seconds);
+            return true;
+        } catch (TimeoutException timeoutException) {
+            return false;
+        }
+    }
+
     // ADDED ON 2026-10-08 10:51 IST: Performs a browser hard refresh with Ctrl+Shift+R so callers can reload dynamic pages without using a normal cache-backed refresh.
     public void hardRefreshPage() {
         action.keyDown(Keys.CONTROL)
