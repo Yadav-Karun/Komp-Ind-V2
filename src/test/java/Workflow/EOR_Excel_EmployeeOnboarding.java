@@ -132,8 +132,32 @@ public class EOR_Excel_EmployeeOnboarding {
         loginPage.clickCandidateLoginLink();
     }
 
-    public void refreshUntilAcceptButtonVisible() throws Exception {
-        candidatePage.acceptOfferLetter();
+    /**
+     * The offer is delivered asynchronously.  After each three-second check,
+     * close the completed-profile modal, sign in again from the candidate-login
+     * page it opens, and check the fresh session. Stop immediately once the
+     * offer is available.
+     */
+    public void refreshUntilAcceptButtonVisible(Data input) throws Exception {
+        final int maxAttempts = 10;
+        final int waitSeconds = 3;
+
+        for (int attempt = 1; attempt <= maxAttempts; attempt++) {
+            if (candidatePage.acceptOfferLetterIfAvailable(waitSeconds)) {
+                return;
+            }
+
+            candidatePage.closeCompletedProfileModal();
+
+            if (attempt < maxAttempts) {
+                loginCandidateWithStoredCredentials(input);
+            }
+        }
+
+        throw new RuntimeException(
+            "Accept Offer was not available after " + maxAttempts
+                + " candidate sessions, each checked for " + waitSeconds + " seconds."
+        );
     }
 
 }

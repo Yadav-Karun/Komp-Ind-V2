@@ -58,6 +58,9 @@ public class CandidatePage extends CommonActions{
 
     By acceptOfferLetter = By.xpath("//button[contains(text(), 'Accept Offer')]");
 
+    // Closes the confirmation modal displayed immediately after an offer is accepted.
+    By acceptedOfferLogout = By.xpath("//button[normalize-space()='Logout']");
+
     // By candidateloginURL = By.xpath("//a[contains(text(),'Candidate Login')]");
 
     public void searchCandidate(String generatedEmail) {
@@ -178,15 +181,20 @@ public class CandidatePage extends CommonActions{
         verifyOfferLetterPending(generatedEmail);
     }
 
-    public void acceptOfferLetter() {
-        if (isVisible(clickDone)) {
-            hardRefreshPage();
+    /** Checks this page's offer action; generic clickable waiting lives in CommonActions. */
+    public boolean acceptOfferLetterIfAvailable(int waitSeconds) {
+        if (!isElementClickable(acceptOfferLetter, waitSeconds)) {
+            return false;
         }
-        else{
-            WebElement acceptButton = getClickableElement(acceptOfferLetter, 120);
-            scrollIntoView(acceptButton);
-            action.moveToElement(acceptButton).click().perform();
-        }
+
+        click(acceptOfferLetter, 120, "Accept Offer");
+        click(acceptedOfferLogout, 120, "Accepted offer Logout");
+        return true;
+    }
+
+    /** Closes the completed-profile modal, which returns the user to the login flow. */
+    public void closeCompletedProfileModal() {
+        click(clickDone, 10, "Profile complete Done");
     }
 
 }
