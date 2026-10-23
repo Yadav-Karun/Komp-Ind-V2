@@ -54,6 +54,9 @@ public class CandidatePage extends CommonActions{
         "//div[@role='dialog']//div[@data-slot='dialog-footer']//button[normalize-space()='Send']"
     );
 
+    By markAsJoined = By.xpath("//button[normalize-space()='Mark as Joined']");
+    By confirmMarkAsJoined = By.xpath("//button[normalize-space()='Yes']");
+
     // By candidateloginURL = By.xpath("//a[contains(text(),'Candidate Login')]");
 
     public void searchCandidate(String generatedEmail) {
@@ -123,6 +126,15 @@ public class CandidatePage extends CommonActions{
         );
     }
 
+    // Targets the Offer Letter column specifically, so an Accepted LOI cannot satisfy this check.
+    private By offerLetterAcceptedStatus(String generatedEmail) {
+        return By.xpath(
+            candidateRowXpath(generatedEmail)
+                + "/td[last()-1]"
+                + "//*[translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='accepted']"
+        );
+    }
+
     // UPDATED ON 2026-10-08 10:51 IST: Verifies the PENDING status with a 3-second wait, then up to 10 Ctrl+Shift+R hard refreshes if the status has not updated.
     private void verifyOfferLetterPending(String generatedEmail) {
         hardRefreshUntilElementVisible(offerLetterPendingStatus(generatedEmail), 3, 10);
@@ -149,8 +161,25 @@ public class CandidatePage extends CommonActions{
         // ADDED ON 2026-10-07 11:10 IST: Uses a physical pointer action because this checkbox did not respond to the standard WebElement click.
         WebElement candidateCheckbox = getClickableElement(multiSelectCheckbox, 120);
         scrollIntoView(candidateCheckbox);
-        action.moveToElement(candidateCheckbox).click().perform();
+
+        if (!isRowSelected(candidateCheckbox)) {
+            action.moveToElement(candidateCheckbox).click().perform();
+        }
     }
+
+    /** Completes the Candidates-page actions required after the offer has been accepted. */
+    public void markCandidateAsJoined(String generatedEmail) {
+        navigateToCandidatesPage();
+        waitForElementToAppear(searchCandidate, 120);
+        type(searchCandidate, generatedEmail);
+        waitForSingleFilteredCandidate(generatedEmail);
+
+        waitForElementToAppear(offerLetterAcceptedStatus(generatedEmail), 120);
+        selectCandidate(generatedEmail);
+        click(markAsJoined, 120, "Mark as Joined");
+        click(confirmMarkAsJoined, 120, "Confirm Mark as Joined");
+    }
+
     public void sendOfferLetter(String generatedEmail) {
         // UPDATED ON 2026-10-08 10:45 IST: Opens the Send Offer Letter dialog after selection, then selects the configured template and sends it.
         WebElement offerLetterButton = getClickableElement(clickSendOfferLetter, 120);
@@ -172,6 +201,19 @@ public class CandidatePage extends CommonActions{
 
         // ADDED ON 2026-10-08 10:49 IST: Waits for the generated candidate's Offer Letter status to update to PENDING after sending.
         verifyOfferLetterPending(generatedEmail);
+    }
+
+    private String candidateRowXpath(String generatedEmail) {
+        String normalizedEmail = generatedEmail.trim().toLowerCase(Locale.ROOT);
+        return "//tr[.//*[translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='"
+            + normalizedEmail
+            + "']]";
+    }
+
+    private boolean isRowSelected(WebElement rowCheckbox) {
+        return "true".equalsIgnoreCase(rowCheckbox.getAttribute("aria-checked"))
+            || "true".equalsIgnoreCase(rowCheckbox.getAttribute("aria-pressed"))
+            || "checked".equalsIgnoreCase(rowCheckbox.getAttribute("data-state"));
     }
 
 }

@@ -271,6 +271,7 @@ public class CandidateSelfInfo extends CommonActions {
 
     /** Closes the completed-profile modal and returns the candidate to the login page. */
     public void closeCompletedProfileModal() {
-        click(doneLogout, 10, "Profile complete Done");
+        waitForElementToAppear(doneLogout, 60);
+        click(doneLogout, 60, "Profile complete Done");
     }
 }

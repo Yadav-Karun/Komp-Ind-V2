@@ -55,6 +55,22 @@ public class VerifyCandidate extends CommonActions {
         waitForPageLoad();
     }
 
+    /** Verifies that the employee created by Mark as Joined is present and Active. */
+    public void verifyEmployeeIsActive(String generatedEmail) {
+        click(clickEmployee, 120, "Employees menu");
+        waitForElementToAppear(clickEOR, 120);
+        click(clickEOR, 120, "EOR tab");
+
+        waitForPageLoad();
+        waitForElementToAppear(employeeTableRows, 120);
+        waitForElementToAppear(employeeTableSummary, 120);
+        waitForElementToAppear(searchEmployee, 120);
+        type(searchEmployee, generatedEmail);
+
+        waitForSingleFilteredEmployee(generatedEmail);
+        waitForElementToAppear(employeeStatusActive(generatedEmail), 120);
+    }
+
     public void actionButton(String generatedEmail) {
         By actionButton = By.xpath(employeeRowXpath(generatedEmail) + "//button[@title='Actions']");
 
@@ -71,6 +87,14 @@ public class VerifyCandidate extends CommonActions {
     // ADDED ON 2026-10-07 12:58 IST: Builds one case-insensitive row locator for both the search-result wait and its Actions button.
     private By employeeRow(String generatedEmail) {
         return By.xpath(employeeRowXpath(generatedEmail));
+    }
+
+    // The Status column is immediately before the final Action column.
+    private By employeeStatusActive(String generatedEmail) {
+        return By.xpath(
+            employeeRowXpath(generatedEmail)
+                + "/td[last()-1]//*[translate(normalize-space(.), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')='active']"
+        );
     }
 
     // ADDED ON 2026-10-07 13:29 IST: Prevents Actions from opening while the email filter is still replacing the initial EOR table rows.

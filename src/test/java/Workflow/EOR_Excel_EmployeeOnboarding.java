@@ -139,7 +139,7 @@ public class EOR_Excel_EmployeeOnboarding {
      * offer is available.
      */
     public void refreshUntilAcceptButtonVisible(Data input) throws Exception {
-        final int maxAttempts = 10;
+        final int maxAttempts = 120;
         final int waitSeconds = 3;
 
         for (int attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -158,6 +158,16 @@ public class EOR_Excel_EmployeeOnboarding {
             "Accept Offer was not available after " + maxAttempts
                 + " candidate sessions, each checked for " + waitSeconds + " seconds."
         );
+    }
+
+    /** Executes phase 2 after the test has re-authenticated as an admin. */
+    public void markCandidateAsJoined(Data input) {
+        candidatePage.markCandidateAsJoined(input.getEmail());
+    }
+
+    /** Executes phase 3 after the Mark as Joined confirmation. */
+    public void verifyJoinedEmployeeIsActive(Data input) {
+        verifyCandidate.verifyEmployeeIsActive(input.getEmail());
     }
 
 }

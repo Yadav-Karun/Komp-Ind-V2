@@ -39,5 +39,11 @@ public class Test_EmployeeOnboarding extends TestBase {
 		eorEmployeeOnboarding.loginCandidateWithStoredCredentials(input);
 
 		eorEmployeeOnboarding.refreshUntilAcceptButtonVisible(input);
+
+		boolean adminReloginError = eorEmployeeOnboarding.loginAdmin(input);
+		Assert.assertFalse(adminReloginError, "Admin re-login failed after accepting the offer.");
+
+		eorEmployeeOnboarding.markCandidateAsJoined(input);
+		eorEmployeeOnboarding.verifyJoinedEmployeeIsActive(input);
 	}
 }
